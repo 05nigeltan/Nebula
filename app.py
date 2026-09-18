@@ -29,6 +29,14 @@ from railguard.operator_ui import (
 )
 from railguard.shm.inference import load_shm_artifact, predict_shm_files
 from railguard.shm.parsing import ShmDataError, load_shm_file
+from railguard.ui_theme import (
+    SUBSYSTEMS,
+    inject_transport_theme,
+    render_footer,
+    render_hero,
+    render_module_header,
+    render_sidebar_brand,
+)
 from railguard.uploads import UploadDataError, materialize_uploads
 
 ROOT = Path(__file__).resolve().parent
@@ -36,6 +44,24 @@ DOOR_MODEL_PATH = ROOT / "artifacts" / "door" / "model.joblib"
 SHM_MODEL_PATH = ROOT / "artifacts" / "shm" / "model.joblib"
 CORRUGATION_MODEL_PATH = ROOT / "artifacts" / "corrugation" / "model.joblib"
 ACV_MODEL_PATH = ROOT / "artifacts" / "acv" / "model.joblib"
+
+
+def style_chart(figure):
+    """Apply the RailGuard visual language to engineering charts."""
+
+    figure.update_layout(
+        template="plotly_white",
+        colorway=["#007f86", "#ffb703", "#38627a", "#7fb7ba"],
+        font={"color": "#102a3b", "family": "Inter, Segoe UI, Arial, sans-serif"},
+        title={"font": {"color": "#102a3b", "size": 18}},
+        margin={"l": 28, "r": 20, "t": 58, "b": 30},
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="#ffffff",
+        legend_title_text="",
+    )
+    figure.update_xaxes(gridcolor="#e7eef0", linecolor="#c9d7dc")
+    figure.update_yaxes(gridcolor="#e7eef0", linecolor="#c9d7dc")
+    return figure
 
 
 def render_operator_card(card: OperatorCard) -> None:
@@ -66,11 +92,7 @@ def render_operator_card(card: OperatorCard) -> None:
 
 
 def render_door_app() -> None:
-    st.header("Door resistance monitor")
-    st.caption(
-        "Upload a continuous Door sensor CSV or Excel workbook to detect cycles and abnormal "
-        "resistance."
-    )
+    render_module_header("Door")
     if not DOOR_MODEL_PATH.exists():
         st.error("No Door model found. Run `uv run python scripts/train_door.py` first.")
         return
@@ -150,8 +172,7 @@ def _damage_distribution(values: np.ndarray) -> pd.DataFrame:
 
 
 def render_shm_app() -> None:
-    st.header("Structural fatigue-damage estimator")
-    st.caption("Upload one or more headerless single-column stress CSVs, or a ZIP containing CSVs.")
+    render_module_header("Structural Health Monitoring")
     if not SHM_MODEL_PATH.exists():
         st.error("No SHM model found. Run `uv run python scripts/train_shm.py` first.")
         return
@@ -214,20 +235,23 @@ def render_shm_app() -> None:
                     "stress": signal.values[::display_step],
                 }
             )
-            engineering.plotly_chart(
-                px.line(trace, x="sample", y="stress", title=f"Stress trace — {selected}"),
-                width="stretch",
+            stress_figure = px.line(
+                trace,
+                x="sample",
+                y="stress",
+                title=f"Stress trace — {selected}",
+                color_discrete_sequence=["#007f86"],
             )
+            engineering.plotly_chart(style_chart(stress_figure), width="stretch")
             contribution = _damage_distribution(signal.values)
-            engineering.plotly_chart(
-                px.bar(
-                    contribution,
-                    x="amplitude_bin",
-                    y="damage_share",
-                    title="Fifth-power damage contribution by stress-amplitude bin",
-                ),
-                width="stretch",
+            damage_figure = px.bar(
+                contribution,
+                x="amplitude_bin",
+                y="damage_share",
+                title="Fifth-power damage contribution by stress-amplitude bin",
+                color_discrete_sequence=["#007f86"],
             )
+            engineering.plotly_chart(style_chart(damage_figure), width="stretch")
             engineering.dataframe(
                 diagnostics.loc[diagnostics["file_id"].eq(selected)],
                 width="stretch",
@@ -239,11 +263,7 @@ def render_shm_app() -> None:
 
 
 def render_corrugation_app() -> None:
-    st.header("Rail corrugation localizer")
-    st.caption(
-        "Upload one or more 129-column axle-box CSVs, or a ZIP of CSVs, to classify "
-        "Normal, Side I, or Side II corrugation."
-    )
+    render_module_header("Rail Corrugation")
     if not CORRUGATION_MODEL_PATH.exists():
         st.error(
             "No Corrugation model found. Run `uv run python scripts/train_corrugation.py` first."
@@ -310,10 +330,15 @@ def render_corrugation_app() -> None:
                     ],
                 }
             )
-            engineering.plotly_chart(
-                px.bar(score_frame, x="side", y="score", title=f"Side scores — {selected}"),
-                width="stretch",
+            score_figure = px.bar(
+                score_frame,
+                x="side",
+                y="score",
+                title=f"Side scores — {selected}",
+                color="side",
+                color_discrete_map={"Side I": "#007f86", "Side II": "#ffb703"},
             )
+            engineering.plotly_chart(style_chart(score_figure), width="stretch")
             engineering.caption(
                 f"Decision threshold: {selected_row['decision_threshold']:.3f}; "
                 f"estimated speed: {selected_row['speed_mps']:.2f} m/s."
@@ -324,11 +349,7 @@ def render_corrugation_app() -> None:
 
 
 def render_acv_app() -> None:
-    st.header("ACV refrigerant-leak localizer")
-    st.caption(
-        "Upload one or more ACV Excel workbooks to rank every car from most to least likely "
-        "to have a refrigerant leak."
-    )
+    render_module_header("ACV Refrigerant Leak")
     if not ACV_MODEL_PATH.exists():
         st.error("No ACV model found. Run `uv run python scripts/train_acv.py` first.")
         return
@@ -386,16 +407,15 @@ def render_acv_app() -> None:
                 ].nunique(),
             )
             engineering.dataframe(predictions, width="stretch", hide_index=True)
-            engineering.plotly_chart(
-                px.bar(
-                    local,
-                    x="car",
-                    y="fault_score",
-                    color="evidence_separation",
-                    title=f"Relative ACV fault scores — {selected}",
-                ),
-                width="stretch",
+            acv_figure = px.bar(
+                local,
+                x="car",
+                y="fault_score",
+                color="evidence_separation",
+                title=f"Relative ACV fault scores — {selected}",
+                color_discrete_sequence=["#007f86", "#ffb703", "#38627a"],
             )
+            engineering.plotly_chart(style_chart(acv_figure), width="stretch")
             engineering.dataframe(
                 local[
                     [
@@ -414,17 +434,25 @@ def render_acv_app() -> None:
         st.error(f"The ACV workbooks could not be processed: {exc}")
 
 
-st.set_page_config(page_title="RailGuard Train Monitor", page_icon="🚆", layout="wide")
-st.title("RailGuard — train condition monitor")
-st.caption(
-    "Decision support for maintenance teams. Results identify patterns to review; they do not "
-    "replace inspection, engineering judgement, or approved operating procedures."
+st.set_page_config(
+    page_title="RailGuard | Fleet Condition Control",
+    page_icon="🚆",
+    layout="wide",
+    initial_sidebar_state="auto",
 )
+inject_transport_theme()
+available_models = sum(
+    path.exists()
+    for path in (DOOR_MODEL_PATH, SHM_MODEL_PATH, CORRUGATION_MODEL_PATH, ACV_MODEL_PATH)
+)
+render_sidebar_brand(available_models)
 subsystem = st.sidebar.radio(
-    "Subsystem",
-    ("Door", "Structural Health Monitoring", "Rail Corrugation", "ACV Refrigerant Leak"),
+    "Monitoring line",
+    tuple(SUBSYSTEMS),
+    format_func=lambda value: SUBSYSTEMS[value]["nav"],
 )
-st.sidebar.caption("Start with the result card. Open Engineering details only when needed.")
+st.sidebar.caption("Select a system, upload its telemetry, then follow the operator action card.")
+render_hero(subsystem)
 if subsystem == "Door":
     render_door_app()
 elif subsystem == "Structural Health Monitoring":
@@ -433,3 +461,4 @@ elif subsystem == "Rail Corrugation":
     render_corrugation_app()
 else:
     render_acv_app()
+render_footer()
