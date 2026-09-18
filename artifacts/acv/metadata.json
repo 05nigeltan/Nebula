@@ -1,0 +1,112 @@
+{
+  "subsystem": "ACV",
+  "selected_model": "peer_physics_fixed",
+  "training_files": 6,
+  "ordinary_training_files": 5,
+  "test_data_used": false,
+  "labels_sha256": "aa5b3edf09bb61e7177df13dcd66feeb5f5b4f317a971ef99bd5950ea25b270a",
+  "source_sha256": {
+    "acv_case_01.xlsx": "d0657d45b52d12db8fbde52242f44f6efd0e3050d04822920aa3ca3b984af233",
+    "acv_case_02.xlsx": "869107ed17735efb55f6d33de2d0456a0b1e76aadbb280a9eef830f6778194c8",
+    "acv_case_03.xlsx": "07801fb08e6fc3654a23cd3d245fd89b327c5e9dd70880b2d80eb600b8d746c6",
+    "acv_case_04.xlsx": "650676c44e8f5979c7cf493a2b0d4173ad0c5ae50d44ead9a8fad0444d19d749",
+    "acv_case_05.xlsx": "cc994bf2a1a197e05ef4f231186a7da990fc6203b842d94327181866d62cfe08",
+    "acv_case_06.xlsx": "6066b6882bf92af6b81fff311af870edf407f19257806f896a47b7e57e751172"
+  },
+  "feature_schema_version": 1,
+  "config": {
+    "setpoint_exceedance_c": 1.0,
+    "temperature_min_c": -20.0,
+    "temperature_max_c": 80.0,
+    "pressure_min": 0.0,
+    "pressure_max": 10000.0,
+    "minimum_peer_cars": 3,
+    "minimum_usable_samples": 50,
+    "temporal_blocks": 4,
+    "dropout_fractions": [
+      0.1,
+      0.2,
+      0.4
+    ],
+    "dropout_repeats": 3,
+    "linear_l2_values": [
+      0.01,
+      0.1,
+      1.0,
+      10.0
+    ],
+    "learned_min_score_gain": 0.02,
+    "confidence_margin": 0.05,
+    "random_state": 42
+  },
+  "model_details": {
+    "feature_names": [
+      "rank_hottest_fraction",
+      "rank_above_setpoint_fraction",
+      "rank_peer_temp_q90",
+      "rank_control_error_q90"
+    ],
+    "weights": [
+      0.25,
+      0.25,
+      0.25,
+      0.25
+    ]
+  },
+  "candidate_metrics": {
+    "peer_physics_fixed": {
+      "mean_rank_decay": 1.0,
+      "top1_accuracy": 1.0,
+      "top3_recall": 1.0,
+      "mean_rank": 1.0,
+      "worst_rank": 1
+    },
+    "linear_listwise": {
+      "mean_rank_decay": 1.0,
+      "top1_accuracy": 1.0,
+      "top3_recall": 1.0,
+      "mean_rank": 1.0,
+      "worst_rank": 1
+    }
+  },
+  "selection_gate": {
+    "linear_score_gain": 0.0,
+    "minimum_required_gain": 0.02,
+    "linear_accepted": false
+  },
+  "robustness_metrics": {
+    "temporal_blocks": {
+      "mean_rank_decay": 0.95,
+      "top1_accuracy": 0.75,
+      "top3_recall": 0.95,
+      "mean_rank": 1.4,
+      "worst_rank": 4
+    },
+    "row_dropout": {
+      "mean_rank_decay": 1.0,
+      "top1_accuracy": 1.0,
+      "top3_recall": 1.0,
+      "mean_rank": 1.0,
+      "worst_rank": 1
+    }
+  },
+  "rich_schema_diagnostic": [
+    {
+      "file_id": "acv_case_04.xlsx",
+      "faulty_car": "01",
+      "true_rank": 2,
+      "ranked_cars": "04|01|02|03|05|06|07|08",
+      "note": "Single rich-schema case; diagnostic only"
+    }
+  ],
+  "package_versions": {
+    "python": "3.13.15",
+    "numpy": "2.5.3",
+    "pandas": "2.3.3",
+    "scipy": "1.18.1"
+  },
+  "candidate_notes": {
+    "competition_test": "Not read or predicted during training.",
+    "rich_schema": "Only one rich-pressure case exists; it is excluded from primary selection."
+  }
+}

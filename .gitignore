@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+cache/
+
+# Generated predictions and validation outputs
+*_predictions.csv
+reports/
+
+# Local research notes and operating-system files
+solution-research/
+.DS_Store
+Thumbs.db

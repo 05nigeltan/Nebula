@@ -1,0 +1,294 @@
+{
+  "subsystem": "Rail Corrugation",
+  "model_name": "side_symmetric_linear_svm",
+  "training_files": 272,
+  "class_counts": {
+    "Normal": 234,
+    "Side II": 24,
+    "Side I": 14
+  },
+  "test_data_used": false,
+  "labels_sha256": "b24e8f98d3d49d919f0a169aec5978a6806b4f548f55909a3a03067586e4d186",
+  "duplicate_groups": [
+    [
+      "Train107.csv",
+      "Train115.csv"
+    ],
+    [
+      "Train165.csv",
+      "Train187.csv"
+    ]
+  ],
+  "config": {
+    "expected_samples": 10000,
+    "sample_rate_hz": 10000.0,
+    "tach_teeth": 90,
+    "wheel_diameter_m": 0.85,
+    "welch_nperseg": 2048,
+    "welch_overlap": 1024,
+    "stft_nperseg": 1024,
+    "stft_overlap": 512,
+    "fixed_bands_hz": [
+      [
+        0.0,
+        50.0
+      ],
+      [
+        50.0,
+        100.0
+      ],
+      [
+        100.0,
+        200.0
+      ],
+      [
+        200.0,
+        400.0
+      ],
+      [
+        400.0,
+        800.0
+      ],
+      [
+        800.0,
+        1600.0
+      ],
+      [
+        1600.0,
+        3200.0
+      ],
+      [
+        3200.0,
+        5001.0
+      ]
+    ],
+    "wavelength_bands_m": [
+      [
+        0.02,
+        0.04
+      ],
+      [
+        0.04,
+        0.08
+      ],
+      [
+        0.08,
+        0.16
+      ],
+      [
+        0.16,
+        0.32
+      ],
+      [
+        0.32,
+        0.64
+      ]
+    ],
+    "feature_families": [
+      "time",
+      "compact"
+    ],
+    "c_values": [
+      0.003,
+      0.01,
+      0.03,
+      0.1
+    ],
+    "positive_weight_multipliers": [
+      0.75,
+      1.0,
+      1.5
+    ],
+    "include_raw_speed_options": [
+      false
+    ],
+    "side_i_bias_values": [
+      0.0,
+      0.2,
+      0.4
+    ],
+    "outer_folds": 5,
+    "outer_repeats": 5,
+    "inner_folds": 4,
+    "random_state": 42,
+    "threshold_grid_size": 41,
+    "minimum_mean_macro_f1": 0.7,
+    "minimum_side_i_recall": 0.5,
+    "minimum_side_ii_recall": 0.6,
+    "minimum_overlap_macro_f1": 0.65
+  },
+  "feature_cache_signature": {
+    "schema_version": 1,
+    "expected_samples": 10000,
+    "sample_rate_hz": 10000.0,
+    "tach_teeth": 90,
+    "wheel_diameter_m": 0.85,
+    "welch_nperseg": 2048,
+    "welch_overlap": 1024,
+    "stft_nperseg": 1024,
+    "stft_overlap": 512,
+    "fixed_bands_hz": [
+      [
+        0.0,
+        50.0
+      ],
+      [
+        50.0,
+        100.0
+      ],
+      [
+        100.0,
+        200.0
+      ],
+      [
+        200.0,
+        400.0
+      ],
+      [
+        400.0,
+        800.0
+      ],
+      [
+        800.0,
+        1600.0
+      ],
+      [
+        1600.0,
+        3200.0
+      ],
+      [
+        3200.0,
+        5001.0
+      ]
+    ],
+    "wavelength_bands_m": [
+      [
+        0.02,
+        0.04
+      ],
+      [
+        0.04,
+        0.08
+      ],
+      [
+        0.08,
+        0.16
+      ],
+      [
+        0.16,
+        0.32
+      ],
+      [
+        0.32,
+        0.64
+      ]
+    ]
+  },
+  "final_spec": {
+    "feature_family": "time",
+    "c_value": 0.01,
+    "positive_weight_multiplier": 1.0,
+    "include_raw_speed": false,
+    "threshold": 0.38122927592633793,
+    "side_i_bias": 0.0
+  },
+  "final_side_feature_names": [
+    "shock_crest_max",
+    "shock_crest_median",
+    "shock_crest_q90",
+    "shock_kurtosis_max",
+    "shock_kurtosis_median",
+    "shock_kurtosis_q90",
+    "shock_peak_max",
+    "shock_peak_median",
+    "shock_peak_q90",
+    "shock_rms_max",
+    "shock_rms_median",
+    "shock_rms_q90",
+    "vibration_crest_max",
+    "vibration_crest_median",
+    "vibration_crest_q90",
+    "vibration_kurtosis_max",
+    "vibration_kurtosis_median",
+    "vibration_kurtosis_q90",
+    "vibration_peak_max",
+    "vibration_peak_median",
+    "vibration_peak_q90",
+    "vibration_rms_max",
+    "vibration_rms_median",
+    "vibration_rms_q90"
+  ],
+  "candidate_metrics": {
+    "speed_only": {
+      "macro_f1": 0.36210228355243457,
+      "per_class_precision": {
+        "Normal": 0.8788142981691369,
+        "Side I": 0.0,
+        "Side II": 0.16901408450704225
+      },
+      "per_class_recall": {
+        "Normal": 0.8615384615384616,
+        "Side I": 0.0,
+        "Side II": 0.3
+      },
+      "per_class_f1": {
+        "Normal": 0.8700906344410876,
+        "Side I": 0.0,
+        "Side II": 0.21621621621621623
+      }
+    },
+    "direct_three_class_linear_svm": {
+      "macro_f1": 0.6724391899502775,
+      "per_class_precision": {
+        "Normal": 0.954855195911414,
+        "Side I": 0.4117647058823529,
+        "Side II": 0.674074074074074
+      },
+      "per_class_recall": {
+        "Normal": 0.9581196581196582,
+        "Side I": 0.3,
+        "Side II": 0.7583333333333333
+      },
+      "per_class_f1": {
+        "Normal": 0.9564846416382252,
+        "Side I": 0.34710743801652894,
+        "Side II": 0.7137254901960784
+      }
+    },
+    "side_symmetric_linear_svm": {
+      "macro_f1": 0.7504100841265829,
+      "per_class_precision": {
+        "Normal": 0.967409948542024,
+        "Side I": 0.4235294117647059,
+        "Side II": 0.8623853211009175
+      },
+      "per_class_recall": {
+        "Normal": 0.9641025641025641,
+        "Side I": 0.5142857142857142,
+        "Side II": 0.7833333333333333
+      },
+      "per_class_f1": {
+        "Normal": 0.9657534246575342,
+        "Side I": 0.4645161290322581,
+        "Side II": 0.8209606986899564
+      },
+      "fold_macro_f1_mean": 0.7419184147051239,
+      "fold_macro_f1_std": 0.12359485451847968,
+      "fold_macro_f1_min": 0.4639376218323587
+    }
+  },
+  "acceptance_gates_before_overlap_test": {
+    "mean_macro_f1": true,
+    "side_i_recall": 1.0,
+    "side_ii_recall": 1.0,
+    "passed": true
+  },
+  "package_versions": {
+    "python": "3.13.15",
+    "numpy": "2.5.3",
+    "pandas": "2.3.3",
+    "scipy": "1.18.1",
+    "scikit_learn": "1.9.1"
+  },
+  "competition_test": "Not read or predicted during training."
+}
