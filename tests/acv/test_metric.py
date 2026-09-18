@@ -16,7 +16,5 @@ def test_prediction_schema_example() -> None:
     from railguard.acv.metric import validate_prediction_frame
 
     validate_prediction_frame(
-        pd.DataFrame(
-            {"file_id": ["case.xlsx"], "ranked_cars": ["03|01|02|04"]}
-        )
+        pd.DataFrame({"file_id": ["case.xlsx"], "ranked_cars": ["03|01|02|04"]})
     )

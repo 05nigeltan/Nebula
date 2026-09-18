@@ -88,7 +88,9 @@ def extract_features(signal: ShmSignal, config: ShmConfig) -> dict[str, float | 
         )
 
     bin_edges = np.asarray((*config.amplitude_bins, np.inf), dtype=float)
-    bin_indices = np.clip(np.digitize(amplitudes, bin_edges, right=False) - 1, 0, len(bin_edges) - 2)
+    bin_indices = np.clip(
+        np.digitize(amplitudes, bin_edges, right=False) - 1, 0, len(bin_edges) - 2
+    )
     count_by_bin = np.bincount(bin_indices, weights=counts, minlength=len(bin_edges) - 1)
     damage_by_bin = np.bincount(bin_indices, weights=damage5, minlength=len(bin_edges) - 1)
     for index, value in enumerate(_safe_share(count_by_bin, total_count)):
@@ -116,15 +118,9 @@ def feature_columns_for_group(columns: Iterable[str], group: str) -> list[str]:
     """Select compact residual features without the primary physical basis itself."""
 
     columns = list(columns)
-    spectrum = [
-        name
-        for name in columns
-        if name.startswith(("rf_bin_", "rf_top_"))
-    ]
+    spectrum = [name for name in columns if name.startswith(("rf_bin_", "rf_top_"))]
     mean_and_chronology = [
-        name
-        for name in columns
-        if "cycle_mean" in name or name.startswith("rf_quarter_")
+        name for name in columns if "cycle_mean" in name or name.startswith("rf_quarter_")
     ]
     compact_stats = [name for name in columns if name.startswith("stat_")]
     common = [

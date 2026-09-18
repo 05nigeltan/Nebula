@@ -10,11 +10,7 @@ from railguard.corrugation.training import train_and_save
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DATA = (
-    ROOT
-    / "NebulaX-Hackathon-ProblemStatement"
-    / "PS3"
-    / "02_Datasets"
-    / "Rail_Corrugation"
+    ROOT / "NebulaX-Hackathon-ProblemStatement" / "PS3" / "02_Datasets" / "Rail_Corrugation"
 )
 
 
@@ -47,9 +43,9 @@ def main() -> None:
                 "nested_macro_f1_std": selected["fold_macro_f1_std"],
                 "per_class_f1": selected["per_class_f1"],
                 "final_spec": result["final_spec"],
-                "pre_robustness_gates_passed": result[
-                    "acceptance_gates_before_overlap_test"
-                ]["passed"],
+                "pre_robustness_gates_passed": result["acceptance_gates_before_overlap_test"][
+                    "passed"
+                ],
                 "training_files": result["training_files"],
                 "test_data_used": result["test_data_used"],
             },
@@ -60,4 +56,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

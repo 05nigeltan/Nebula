@@ -12,9 +12,7 @@ import pandas as pd
 
 from railguard.corrugation.config import VALID_LABELS
 
-CHANNEL_PATTERN = re.compile(
-    r"^(Vibration|Shock) of bearing in position ([1-8]) of car ([1-8])$"
-)
+CHANNEL_PATTERN = re.compile(r"^(Vibration|Shock) of bearing in position ([1-8]) of car ([1-8])$")
 
 
 class CorrugationDataError(ValueError):
@@ -150,5 +148,9 @@ def load_training_manifest(train_dir: str | Path, labels_csv: str | Path) -> pd.
     order = labels["filename"].str.extract(r"(\d+)", expand=False)
     if order.isna().any():
         raise CorrugationDataError("Every training filename must contain a numeric identifier")
-    return labels.assign(_order=order.astype(int)).sort_values("_order").drop(columns="_order").reset_index(drop=True)
-
+    return (
+        labels.assign(_order=order.astype(int))
+        .sort_values("_order")
+        .drop(columns="_order")
+        .reset_index(drop=True)
+    )

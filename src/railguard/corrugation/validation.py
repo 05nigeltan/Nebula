@@ -175,12 +175,8 @@ def run_robustness_suite(
         "speed_bin_holdouts": speed_bin_holdouts(features, labels, final_spec, config),
         "acceptance": {
             "overlap_macro_f1": bool(overlap_passed),
-            "side_i_recall": bool(
-                overlap_score["per_class_recall"][SIDE_I_LABEL] > 0
-            ),
-            "side_ii_recall": bool(
-                overlap_score["per_class_recall"][SIDE_II_LABEL] > 0
-            ),
+            "side_i_recall": bool(overlap_score["per_class_recall"][SIDE_I_LABEL] > 0),
+            "side_ii_recall": bool(overlap_score["per_class_recall"][SIDE_II_LABEL] > 0),
             "passed": bool(
                 overlap_passed
                 and overlap_score["per_class_recall"][SIDE_I_LABEL] > 0

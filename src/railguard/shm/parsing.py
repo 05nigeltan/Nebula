@@ -90,4 +90,9 @@ def load_training_manifest(
         extra = sorted(set(actual).difference(expected))
         raise ShmDataError(f"Label/file mismatch; missing={missing}, extra={extra}")
     natural_order = labels["filename"].str.extract(r"(\d+)", expand=False).astype(int)
-    return labels.assign(_order=natural_order).sort_values("_order").drop(columns="_order").reset_index(drop=True)
+    return (
+        labels.assign(_order=natural_order)
+        .sort_values("_order")
+        .drop(columns="_order")
+        .reset_index(drop=True)
+    )

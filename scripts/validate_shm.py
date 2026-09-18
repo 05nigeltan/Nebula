@@ -23,7 +23,9 @@ DEFAULT_DATA = ROOT / "NebulaX-Hackathon-ProblemStatement" / "PS3" / "02_Dataset
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--features", type=Path, default=ROOT / "cache" / "shm" / "train_features.csv")
+    parser.add_argument(
+        "--features", type=Path, default=ROOT / "cache" / "shm" / "train_features.csv"
+    )
     parser.add_argument("--labels", type=Path, default=DEFAULT_DATA / "Train_Labels.csv")
     parser.add_argument("--report-dir", type=Path, default=ROOT / "reports" / "shm")
     parser.add_argument("--repeats", type=int, default=5)
@@ -71,9 +73,7 @@ def main() -> None:
     repeated_predictions.to_csv(
         args.report_dir / "repeated_validation_predictions.csv", index=False
     )
-    cluster_predictions.to_csv(
-        args.report_dir / "condition_cluster_predictions.csv", index=False
-    )
+    cluster_predictions.to_csv(args.report_dir / "condition_cluster_predictions.csv", index=False)
     pd.DataFrame(ablation).to_csv(args.report_dir / "ablation_results.csv", index=False)
     print(
         json.dumps(

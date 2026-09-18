@@ -3,8 +3,13 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .ruff_cache/
+.coverage
+htmlcov/
 *.egg-info/
 cache/
+
+# Local hackathon brief, references, and multi-gigabyte source datasets
+/NebulaX-Hackathon-ProblemStatement/
 
 # Generated predictions and validation outputs
 *_predictions.csv

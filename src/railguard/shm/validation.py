@@ -53,8 +53,7 @@ def residual_candidates(config: ShmConfig) -> list[ResidualSpec]:
     for group in groups:
         for shrinkage in config.residual_shrinkages:
             candidates.extend(
-                ResidualSpec("ridge", alpha, shrinkage, group)
-                for alpha in config.ridge_alphas
+                ResidualSpec("ridge", alpha, shrinkage, group) for alpha in config.ridge_alphas
             )
     return candidates
 

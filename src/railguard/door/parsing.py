@@ -81,9 +81,7 @@ def load_door_data(
             frame = pd.read_csv(source)
             source_kind = "CSV"
         else:
-            raise DoorDataError(
-                f"Unsupported Door file type {suffix!r}; use .csv, .xlsx, or .xls"
-            )
+            raise DoorDataError(f"Unsupported Door file type {suffix!r}; use .csv, .xlsx, or .xls")
     except Exception as exc:  # pandas exposes multiple parser exception types
         if isinstance(exc, DoorDataError):
             raise

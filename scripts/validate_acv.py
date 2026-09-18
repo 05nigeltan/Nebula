@@ -14,9 +14,7 @@ from railguard.acv.parsing import load_acv_case, load_training_manifest
 from railguard.acv.validation import compare_models, feature_ablation, robustness_suite
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_DATA = (
-    ROOT / "NebulaX-Hackathon-ProblemStatement" / "PS3" / "02_Datasets" / "ACV"
-)
+DEFAULT_DATA = ROOT / "NebulaX-Hackathon-ProblemStatement" / "PS3" / "02_Datasets" / "ACV"
 
 
 def parse_args() -> argparse.Namespace:
@@ -33,8 +31,7 @@ def main() -> None:
     manifest = load_training_manifest(args.train_dir, args.labels)
     faulty_by_file = dict(zip(manifest["filename"], manifest["faulty_car"], strict=True))
     cases = {
-        filename: load_acv_case(args.train_dir / filename)
-        for filename in manifest["filename"]
+        filename: load_acv_case(args.train_dir / filename) for filename in manifest["filename"]
     }
     features = pd.concat(
         [extract_case_features(case, config) for case in cases.values()],

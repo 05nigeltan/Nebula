@@ -20,8 +20,7 @@ from railguard.shm.rainflow_features import extract_features
 
 def _natural_key(path: Path) -> tuple[Any, ...]:
     return tuple(
-        int(part) if part.isdigit() else part.lower()
-        for part in re.split(r"(\d+)", path.name)
+        int(part) if part.isdigit() else part.lower() for part in re.split(r"(\d+)", path.name)
     )
 
 

@@ -134,9 +134,7 @@ def extract_features(
         total_power, EPSILON
     )
     fixed = _band_ratios(power, frequencies, config.fixed_bands_hz)
-    wavelength_frequency_bands = _wavelength_frequency_bands(
-        speed_mps, config.wavelength_bands_m
-    )
+    wavelength_frequency_bands = _wavelength_frequency_bands(speed_mps, config.wavelength_bands_m)
     wavelength = _band_ratios(power, frequencies, wavelength_frequency_bands)
     wave_variation = _windowed_wavelength_variation(centered, speed_mps, config)
 
@@ -190,4 +188,3 @@ def extract_features(
                 for band_index in range(len(config.wavelength_bands_m)):
                     row[f"{side}_{signal_type}_wave_consensus_{band_index}"] = 0.0
     return row
-

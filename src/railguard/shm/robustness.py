@@ -28,9 +28,7 @@ def _fit_pair(
     physics = FittedDamageModel(physics_spec, ResidualSpec("none"), config).fit(
         train_frame, train_target
     )
-    hybrid = FittedDamageModel(physics_spec, residual_spec, config).fit(
-        train_frame, train_target
-    )
+    hybrid = FittedDamageModel(physics_spec, residual_spec, config).fit(train_frame, train_target)
     return (
         physics.predict(validation_frame),
         hybrid.predict(validation_frame),
@@ -92,12 +90,12 @@ def repeated_stratified_validation(
                 "relative_improvement": (physics.mape - hybrid.mape) / physics.mape,
             }
         )
-    physics_ape = np.abs(predictions["physics_prediction"] - predictions["truth"]) / predictions[
-        "truth"
-    ]
-    hybrid_ape = np.abs(predictions["hybrid_prediction"] - predictions["truth"]) / predictions[
-        "truth"
-    ]
+    physics_ape = (
+        np.abs(predictions["physics_prediction"] - predictions["truth"]) / predictions["truth"]
+    )
+    hybrid_ape = (
+        np.abs(predictions["hybrid_prediction"] - predictions["truth"]) / predictions["truth"]
+    )
     physics_metrics = score_shm(
         predictions["truth"].to_numpy(float), predictions["physics_prediction"].to_numpy(float)
     )
@@ -108,9 +106,7 @@ def repeated_stratified_validation(
         "repeats": repeats,
         "physics": physics_metrics.as_dict(),
         "hybrid": hybrid_metrics.as_dict(),
-        "relative_mape_improvement": (
-            physics_metrics.mape - hybrid_metrics.mape
-        )
+        "relative_mape_improvement": (physics_metrics.mape - hybrid_metrics.mape)
         / physics_metrics.mape,
         "sample_fold_win_rate": float(np.mean(hybrid_ape < physics_ape)),
         "repeat_results": repeat_metrics,
@@ -261,8 +257,6 @@ def residual_ablation(
             model = FittedDamageModel(physics_spec, spec, config).fit(
                 frame.iloc[training].reset_index(drop=True), target[training]
             )
-            predictions[held_out] = model.predict(
-                frame.iloc[[held_out]].reset_index(drop=True)
-            )[0]
+            predictions[held_out] = model.predict(frame.iloc[[held_out]].reset_index(drop=True))[0]
         results.append({"feature_group": group, **score_shm(target, predictions).as_dict()})
     return results

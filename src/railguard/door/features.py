@@ -235,4 +235,3 @@ class DoorFeatureTransformer(BaseEstimator, TransformerMixin):
     def get_feature_names_out(self, input_features=None) -> np.ndarray:
         del input_features
         return np.asarray(self.feature_names_inferred_, dtype=object)
-

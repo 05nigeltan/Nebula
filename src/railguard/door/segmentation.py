@@ -58,8 +58,7 @@ def infer_operation(frame: pd.DataFrame) -> tuple[str, str | None]:
     warning = None
     if position_operation != operation:
         warning = (
-            f"Command implies {operation}, but door-position direction implies "
-            f"{position_operation}"
+            f"Command implies {operation}, but door-position direction implies {position_operation}"
         )
     return operation, warning
 
@@ -114,4 +113,3 @@ def segment_stream(
         maximum_within_cycle_gap_ms=float(within_values.max()),
     )
     return segments, diagnostics
-

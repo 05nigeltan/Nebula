@@ -15,11 +15,7 @@ from railguard.corrugation.validation import run_robustness_suite
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DATA = (
-    ROOT
-    / "NebulaX-Hackathon-ProblemStatement"
-    / "PS3"
-    / "02_Datasets"
-    / "Rail_Corrugation"
+    ROOT / "NebulaX-Hackathon-ProblemStatement" / "PS3" / "02_Datasets" / "Rail_Corrugation"
 )
 
 
@@ -52,9 +48,7 @@ def main() -> None:
     print(
         json.dumps(
             {
-                "overlap_macro_f1": report["overlap_ge_9_5_mps"][
-                    "fold_macro_f1_mean"
-                ],
+                "overlap_macro_f1": report["overlap_ge_9_5_mps"]["fold_macro_f1_mean"],
                 "no_raw_speed_macro_f1": report["no_raw_speed"]["fold_macro_f1_mean"],
                 "robustness_passed": report["acceptance"]["passed"],
                 "test_data_used": report["test_data_used"],
@@ -66,4 +60,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

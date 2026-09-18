@@ -54,4 +54,3 @@ class AcvConfig:
     learned_min_score_gain: float = 0.02
     confidence_margin: float = 0.05
     random_state: int = 42
-

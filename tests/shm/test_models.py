@@ -40,9 +40,7 @@ def test_cross_fitted_residual_targets_exclude_each_file(monkeypatch) -> None:
         return original(self, log_basis, y)
 
     monkeypatch.setattr(RainflowCalibrator, "fit", recording_fit)
-    predictions = cross_fitted_physics_predictions(
-        frame, target, PhysicsSpec(5.0, "fixed")
-    )
+    predictions = cross_fitted_physics_predictions(frame, target, PhysicsSpec(5.0, "fixed"))
     assert observed_sizes == [3, 3, 3, 3]
     assert np.all(predictions > 0)
 
@@ -62,4 +60,6 @@ def test_lambda_zero_equivalent_model_is_physics_only() -> None:
         ResidualSpec("ridge", 10.0, 0.0, "spectrum"),
         config,
     )
-    np.testing.assert_allclose(pure.fit(frame, target).predict(frame), zero.fit(frame, target).predict(frame))
+    np.testing.assert_allclose(
+        pure.fit(frame, target).predict(frame), zero.fit(frame, target).predict(frame)
+    )

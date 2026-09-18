@@ -69,4 +69,3 @@ def validate_prediction_frame(frame: pd.DataFrame) -> None:
             raise AcvDataError("A ranked_cars value cannot contain duplicate cars")
         if not all(len(car) == 2 and car.isdigit() for car in cars):
             raise AcvDataError("Every ranked car must be a two-digit identifier")
-

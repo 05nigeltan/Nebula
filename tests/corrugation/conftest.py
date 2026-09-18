@@ -24,4 +24,3 @@ def corrugation_csv(tmp_path: Path) -> Path:
     path = tmp_path / "sample.csv"
     pd.DataFrame(columns).to_csv(path, index=False)
     return path
-

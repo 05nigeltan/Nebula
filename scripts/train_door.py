@@ -15,9 +15,7 @@ DEFAULT_DATA = ROOT / "NebulaX-Hackathon-ProblemStatement" / "PS3" / "02_Dataset
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--train", type=Path, default=DEFAULT_DATA / "Train.csv")
-    parser.add_argument(
-        "--labels", type=Path, default=DEFAULT_DATA / "Train_Segments_Answer.csv"
-    )
+    parser.add_argument("--labels", type=Path, default=DEFAULT_DATA / "Train_Segments_Answer.csv")
     parser.add_argument("--artifact-dir", type=Path, default=ROOT / "artifacts" / "door")
     parser.add_argument("--report-dir", type=Path, default=ROOT / "reports" / "door")
     return parser.parse_args()

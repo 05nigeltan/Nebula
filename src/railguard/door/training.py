@@ -120,7 +120,11 @@ def choose_threshold(scores: np.ndarray, targets: np.ndarray) -> tuple[float, fl
         accuracy = float(np.mean(predicted == targets))
         true_positive = int(np.sum((predicted == 1) & (targets == 1)))
         false_negative = int(np.sum((predicted == 0) & (targets == 1)))
-        recall = true_positive / (true_positive + false_negative) if true_positive + false_negative else 0
+        recall = (
+            true_positive / (true_positive + false_negative)
+            if true_positive + false_negative
+            else 0
+        )
         key = (accuracy, recall, -abs(float(threshold) - centre))
         if best_key is None or key > best_key:
             best_key = key
@@ -195,8 +199,12 @@ def _summarise_candidate(
     true_positive = int(np.sum((predictions == 1) & (targets == 1)))
     false_positive = int(np.sum((predictions == 1) & (targets == 0)))
     false_negative = int(np.sum((predictions == 0) & (targets == 1)))
-    precision = true_positive / (true_positive + false_positive) if true_positive + false_positive else 0
-    recall = true_positive / (true_positive + false_negative) if true_positive + false_negative else 0
+    precision = (
+        true_positive / (true_positive + false_positive) if true_positive + false_positive else 0
+    )
+    recall = (
+        true_positive / (true_positive + false_negative) if true_positive + false_negative else 0
+    )
     operations = np.array([segment.operation for segment in segments])
     return CandidateResult(
         name=name,
@@ -204,7 +212,9 @@ def _summarise_candidate(
         accuracy=float(np.mean(predictions == targets)),
         abnormal_precision=precision,
         abnormal_recall=recall,
-        open_accuracy=float(np.mean(predictions[operations == "Open"] == targets[operations == "Open"])),
+        open_accuracy=float(
+            np.mean(predictions[operations == "Open"] == targets[operations == "Open"])
+        ),
         close_accuracy=float(
             np.mean(predictions[operations == "Close"] == targets[operations == "Close"])
         ),
@@ -226,7 +236,9 @@ def evaluate_candidates(
     baseline_predictions = np.zeros(len(segments), dtype=int)
     baseline_choices = []
     for train_index, validation_index in outer:
-        model = OperationThresholdClassifier().fit(_subset(segments, train_index), targets[train_index])
+        model = OperationThresholdClassifier().fit(
+            _subset(segments, train_index), targets[train_index]
+        )
         baseline_predictions[validation_index] = model.predict(_subset(segments, validation_index))
         baseline_choices.append({"thresholds": model.thresholds_, "directions": model.directions_})
     all_predictions["threshold_baseline"] = baseline_predictions
@@ -260,9 +272,7 @@ def evaluate_candidates(
                 }
             )
         all_predictions[name] = predictions
-        results.append(
-            _summarise_candidate(name, predictions, targets, segments, truth, choices)
-        )
+        results.append(_summarise_candidate(name, predictions, targets, segments, truth, choices))
     return results, all_predictions
 
 

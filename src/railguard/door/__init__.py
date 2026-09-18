@@ -3,4 +3,3 @@
 from railguard.door.inference import predict_door
 
 __all__ = ["predict_door"]
-

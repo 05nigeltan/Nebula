@@ -22,9 +22,7 @@ def acv_workbook(tmp_path: Path) -> Path:
             23.0 + fault_offset + rng.normal(0.0, 0.08, sample_count)
         )
         frame[f"Car {car} - Outdoor Average Temperature"] = np.full(sample_count, 31.0)
-        frame[f"Car {car} - ACV Control Temperature (Cooling)"] = np.full(
-            sample_count, 22.0
-        )
+        frame[f"Car {car} - ACV Control Temperature (Cooling)"] = np.full(sample_count, 22.0)
         frame[f"Car {car} - ACV Running Mode"] = ["Cooling"] * sample_count
         frame[f"Car {car} - ACV Information Valid"] = ["Valid"] * sample_count
     path = tmp_path / "synthetic_acv.xlsx"

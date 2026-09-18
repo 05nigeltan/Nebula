@@ -68,9 +68,9 @@ def _load_or_extract_training_features(
     if cache_path.is_file() and cached_signature == feature_cache_signature(config):
         cached = pd.read_csv(cache_path)
         required = {"file_id", "sha256", *(f"log_b_m_{value:g}" for value in config.exponents)}
-        file_ids_match = cached.get("file_id", pd.Series(dtype=str)).tolist() == manifest[
-            "filename"
-        ].tolist()
+        file_ids_match = (
+            cached.get("file_id", pd.Series(dtype=str)).tolist() == manifest["filename"].tolist()
+        )
         if required.issubset(cached.columns) and file_ids_match:
             current_hashes = [sha256_file(train_dir / name) for name in manifest["filename"]]
             if cached["sha256"].tolist() == current_hashes:
@@ -200,9 +200,10 @@ def train_and_save(
             "selected_prediction": validation.selected_predictions,
         }
     )
-    prediction_frame["selected_ape"] = np.abs(
-        prediction_frame["selected_prediction"] - prediction_frame["truth"]
-    ) / prediction_frame["truth"]
+    prediction_frame["selected_ape"] = (
+        np.abs(prediction_frame["selected_prediction"] - prediction_frame["truth"])
+        / prediction_frame["truth"]
+    )
     prediction_frame.to_csv(report_dir / "out_of_fold_predictions.csv", index=False)
     features.select_dtypes(include="number").describe().transpose().to_csv(
         report_dir / "feature_diagnostics.csv"

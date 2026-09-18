@@ -96,4 +96,3 @@ def validate_prediction_frame(predictions: pd.DataFrame) -> None:
             f"Door predictions must have columns {OUTPUT_COLUMNS}, got {tuple(predictions.columns)}"
         )
     _prepare_segments(predictions, "prediction")
-

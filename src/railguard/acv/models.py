@@ -23,9 +23,9 @@ def ranking_from_scores(frame: pd.DataFrame, scores: np.ndarray) -> list[str]:
     scored = frame[["car"]].copy()
     scored["score"] = np.asarray(scores, dtype=float)
     scored["tie_key"] = scored["car"].map(_natural_car_key)
-    return scored.sort_values(
-        ["score", "tie_key"], ascending=[False, True], kind="mergesort"
-    )["car"].tolist()
+    return scored.sort_values(["score", "tie_key"], ascending=[False, True], kind="mergesort")[
+        "car"
+    ].tolist()
 
 
 @dataclass(frozen=True)

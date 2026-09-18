@@ -26,9 +26,7 @@ def test_feature_extraction_is_finite_and_side_symmetric(corrugation_csv) -> Non
     signal = load_corrugation_file(corrugation_csv, expected_samples=256)
     features = extract_features(signal, config)
     first = {name.removeprefix("side_i_") for name in features if name.startswith("side_i_")}
-    second = {
-        name.removeprefix("side_ii_") for name in features if name.startswith("side_ii_")
-    }
+    second = {name.removeprefix("side_ii_") for name in features if name.startswith("side_ii_")}
     assert first == second
     numeric = [value for value in features.values() if isinstance(value, (int, float))]
     assert np.all(np.isfinite(numeric))

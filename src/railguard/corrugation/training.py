@@ -96,9 +96,9 @@ def load_or_extract_training_features(
             cached_signature = None
     if cache_path.is_file() and cached_signature == feature_cache_signature(config):
         cached = pd.read_csv(cache_path)
-        ids_match = cached.get("file_id", pd.Series(dtype=str)).tolist() == manifest[
-            "filename"
-        ].tolist()
+        ids_match = (
+            cached.get("file_id", pd.Series(dtype=str)).tolist() == manifest["filename"].tolist()
+        )
         if {"file_id", "sha256"}.issubset(cached.columns) and ids_match:
             current_hashes = [sha256_file(train_dir / name) for name in manifest["filename"]]
             if cached["sha256"].tolist() == current_hashes:
@@ -110,9 +110,7 @@ def load_or_extract_training_features(
         json.dumps(
             {
                 "feature_signature": feature_cache_signature(config),
-                "source_sha256": dict(
-                    zip(features["file_id"], features["sha256"], strict=True)
-                ),
+                "source_sha256": dict(zip(features["file_id"], features["sha256"], strict=True)),
             },
             indent=2,
         ),
@@ -183,9 +181,7 @@ def select_model_spec(
             config.minimum_side_ii_recall,
             config.side_i_bias_values,
         )
-        selected_spec = replace(
-            raw_spec, threshold=threshold, side_i_bias=side_i_bias
-        )
+        selected_spec = replace(raw_spec, threshold=threshold, side_i_bias=side_i_bias)
         feature_count = len(feature_bases(features, raw_spec.feature_family))
         row = {
             **asdict(selected_spec),
@@ -350,16 +346,12 @@ def train_and_save(
 
     paired_score = validation["candidate_scores"]["side_symmetric_linear_svm"]
     acceptance = {
-        "mean_macro_f1": bool(
-            paired_score["fold_macro_f1_mean"] >= config.minimum_mean_macro_f1
-        ),
+        "mean_macro_f1": bool(paired_score["fold_macro_f1_mean"] >= config.minimum_mean_macro_f1),
         "side_i_recall": bool(
-            paired_score["per_class_recall"][SIDE_I_LABEL]
-            >= config.minimum_side_i_recall
+            paired_score["per_class_recall"][SIDE_I_LABEL] >= config.minimum_side_i_recall
         ),
         "side_ii_recall": bool(
-            paired_score["per_class_recall"][SIDE_II_LABEL]
-            >= config.minimum_side_ii_recall
+            paired_score["per_class_recall"][SIDE_II_LABEL] >= config.minimum_side_ii_recall
         ),
     }
     metadata: dict[str, Any] = {
@@ -401,14 +393,9 @@ def train_and_save(
         json.dumps(metadata, indent=2, default=float), encoding="utf-8"
     )
     validation["fold_results"].to_csv(report_dir / "fold_results.csv", index=False)
-    validation["predictions"].to_csv(
-        report_dir / "out_of_fold_predictions.csv", index=False
-    )
+    validation["predictions"].to_csv(report_dir / "out_of_fold_predictions.csv", index=False)
     pd.DataFrame(
-        [
-            {"candidate": name, **values}
-            for name, values in validation["candidate_scores"].items()
-        ]
+        [{"candidate": name, **values} for name, values in validation["candidate_scores"].items()]
     ).to_json(report_dir / "candidate_results.json", orient="records", indent=2)
     pd.DataFrame(final_candidates).to_csv(
         report_dir / "final_inner_candidate_results.csv", index=False

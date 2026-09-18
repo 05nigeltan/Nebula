@@ -115,17 +115,13 @@ def compare_models(
 
     fixed_metrics = _summarise(fixed_rows)
     learned_metrics = _summarise(learned_rows)
-    score_gain = float(
-        learned_metrics["mean_rank_decay"] - fixed_metrics["mean_rank_decay"]
-    )
+    score_gain = float(learned_metrics["mean_rank_decay"] - fixed_metrics["mean_rank_decay"])
     improves_worst = learned_metrics["worst_rank"] < fixed_metrics["worst_rank"]
     learned_accepted = bool(
         (score_gain >= config.learned_min_score_gain or improves_worst)
         and learned_metrics["top3_recall"] >= fixed_metrics["top3_recall"]
     )
-    final_l2, final_candidates = _select_l2(
-        ordinary, ordinary_files, faulty_by_file, config
-    )
+    final_l2, final_candidates = _select_l2(ordinary, ordinary_files, faulty_by_file, config)
     return {
         "ordinary_files": ordinary_files,
         "fixed_rows": fixed_rows,
@@ -193,7 +189,9 @@ def robustness_suite(
     temporal_rows = []
     for file_id in sorted(ordinary_files):
         case = cases[file_id]
-        for block, indices in enumerate(np.array_split(np.arange(case.sample_count), config.temporal_blocks)):
+        for block, indices in enumerate(
+            np.array_split(np.arange(case.sample_count), config.temporal_blocks)
+        ):
             block_features = extract_case_features(case.subset(indices), config)
             if not block_features["supported"].any():
                 continue

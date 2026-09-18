@@ -20,8 +20,7 @@ from railguard.corrugation.parsing import CorrugationDataError, load_corrugation
 
 def _natural_key(path: Path) -> tuple[Any, ...]:
     return tuple(
-        int(part) if part.isdigit() else part.lower()
-        for part in re.split(r"(\d+)", path.name)
+        int(part) if part.isdigit() else part.lower() for part in re.split(r"(\d+)", path.name)
     )
 
 
@@ -79,9 +78,7 @@ def predict_corrugation_files(
     )
     # np.maximum is expressed explicitly to avoid pandas index alignment surprises.
     diagnostics["margin_above_threshold"] = (
-        pd.DataFrame(
-            {"i": side_i_score + model.spec.side_i_bias, "ii": side_ii_score}
-        ).max(axis=1)
+        pd.DataFrame({"i": side_i_score + model.spec.side_i_bias, "ii": side_ii_score}).max(axis=1)
         - model.spec.threshold
     )
     return output, diagnostics

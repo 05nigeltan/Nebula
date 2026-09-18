@@ -9,4 +9,3 @@ def test_parser_maps_all_channels_and_sides(corrugation_csv) -> None:
     assert sum(channel.side == "side_ii" for channel in signal.channels) == 64
     assert sum(channel.signal_type == "vibration" for channel in signal.channels) == 64
     assert sum(channel.signal_type == "shock" for channel in signal.channels) == 64
-

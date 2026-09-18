@@ -50,18 +50,14 @@ def train_and_save(
     artifact_dir = Path(artifact_dir)
     report_dir = Path(report_dir)
     manifest = load_training_manifest(train_dir, labels_csv)
-    faulty_by_file = dict(
-        zip(manifest["filename"], manifest["faulty_car"], strict=True)
-    )
+    faulty_by_file = dict(zip(manifest["filename"], manifest["faulty_car"], strict=True))
 
     cases = {}
     feature_frames = []
     for position, filename in enumerate(manifest["filename"], start=1):
         case = load_acv_case(train_dir / filename)
         if faulty_by_file[filename] not in case.car_ids:
-            raise AcvDataError(
-                f"Faulty car {faulty_by_file[filename]} is absent from {filename}"
-            )
+            raise AcvDataError(f"Faulty car {faulty_by_file[filename]} is absent from {filename}")
         cases[filename] = case
         feature_frames.append(extract_case_features(case, config))
         print(f"Extracted ACV features {position:02d}/{len(manifest)}: {filename}", flush=True)
@@ -72,9 +68,7 @@ def train_and_save(
     robustness = robustness_suite(cases, faulty_by_file, config)
     ordinary = features[features["file_id"].isin(comparison["ordinary_files"])]
     if comparison["learned_accepted"]:
-        final_model = LinearListwiseRanker(l2=comparison["final_l2"]).fit(
-            ordinary, faulty_by_file
-        )
+        final_model = LinearListwiseRanker(l2=comparison["final_l2"]).fit(ordinary, faulty_by_file)
         model_details = {
             "l2": comparison["final_l2"],
             "feature_names": list(final_model.feature_names),
@@ -116,9 +110,7 @@ def train_and_save(
         "ordinary_training_files": len(comparison["ordinary_files"]),
         "test_data_used": False,
         "labels_sha256": sha256_file(labels_csv),
-        "source_sha256": {
-            file_id: cases[file_id].sha256 for file_id in manifest["filename"]
-        },
+        "source_sha256": {file_id: cases[file_id].sha256 for file_id in manifest["filename"]},
         "feature_schema_version": FEATURE_SCHEMA_VERSION,
         "config": asdict(config),
         "model_details": model_details,
@@ -165,4 +157,3 @@ def train_and_save(
         json.dumps(robustness, indent=2, default=_json_default), encoding="utf-8"
     )
     return {"artifact_path": str(artifact_path), **metadata}
-

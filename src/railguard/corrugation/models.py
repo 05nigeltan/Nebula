@@ -25,9 +25,7 @@ class ModelSpec:
 
 def available_side_bases(frame: pd.DataFrame) -> list[str]:
     first = {column.removeprefix("side_i_") for column in frame if column.startswith("side_i_")}
-    second = {
-        column.removeprefix("side_ii_") for column in frame if column.startswith("side_ii_")
-    }
+    second = {column.removeprefix("side_ii_") for column in frame if column.startswith("side_ii_")}
     if first != second:
         raise ValueError("Side I and Side II feature schemas differ")
     return sorted(first)
@@ -46,7 +44,8 @@ def feature_bases(frame: pd.DataFrame, family: str) -> list[str]:
             is_time = any(token in f"_{base}" for token in time_tokens)
             is_wave = "wave_band" in base and "_max" not in base
             is_shape = any(
-                token in base for token in ("spectral_entropy_median", "spectral_concentration_median")
+                token in base
+                for token in ("spectral_entropy_median", "spectral_concentration_median")
             )
             is_consensus = "wave_consensus" in base
             if is_time or is_wave or is_shape or is_consensus:
@@ -181,6 +180,4 @@ class FittedCorrugationModel:
 
     def predict(self, frame: pd.DataFrame) -> np.ndarray:
         first, second = self.decision_scores(frame)
-        return labels_from_scores(
-            first, second, self.spec.threshold, self.spec.side_i_bias
-        )
+        return labels_from_scores(first, second, self.spec.threshold, self.spec.side_i_bias)

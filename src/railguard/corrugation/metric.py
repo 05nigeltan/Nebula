@@ -58,4 +58,3 @@ def validate_prediction_frame(frame: pd.DataFrame) -> None:
     unknown = sorted(set(frame["prediction"]).difference(VALID_LABELS))
     if unknown:
         raise CorrugationDataError(f"Unknown corrugation prediction labels: {unknown}")
-

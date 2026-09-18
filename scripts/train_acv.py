@@ -9,9 +9,7 @@ from pathlib import Path
 from railguard.acv.training import train_and_save
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_DATA = (
-    ROOT / "NebulaX-Hackathon-ProblemStatement" / "PS3" / "02_Datasets" / "ACV"
-)
+DEFAULT_DATA = ROOT / "NebulaX-Hackathon-ProblemStatement" / "PS3" / "02_Datasets" / "ACV"
 
 
 def parse_args() -> argparse.Namespace:

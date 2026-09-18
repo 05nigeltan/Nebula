@@ -119,7 +119,9 @@ class FittedDamageModel:
         self.scaler_: StandardScaler | None = None
         self.residual_model_ = None
         if self.residual_spec.estimator != "none" and self.residual_spec.shrinkage > 0:
-            self.feature_names_ = feature_columns_for_group(frame.columns, self.residual_spec.feature_group)
+            self.feature_names_ = feature_columns_for_group(
+                frame.columns, self.residual_spec.feature_group
+            )
             if not self.feature_names_:
                 raise ValueError("Residual feature selection produced no columns")
             cross_fitted = cross_fitted_physics_predictions(frame, y, self.physics_spec)

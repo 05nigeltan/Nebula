@@ -9,13 +9,7 @@ from railguard.corrugation.parsing import load_training_manifest
 
 def test_supplied_training_manifest_has_expected_classes() -> None:
     root = Path(__file__).resolve().parents[2]
-    data = (
-        root
-        / "NebulaX-Hackathon-ProblemStatement"
-        / "PS3"
-        / "02_Datasets"
-        / "Rail_Corrugation"
-    )
+    data = root / "NebulaX-Hackathon-ProblemStatement" / "PS3" / "02_Datasets" / "Rail_Corrugation"
     manifest = load_training_manifest(data / "Train", data / "Train_Labels.csv")
     assert len(manifest) == 272
     assert manifest["label"].value_counts().to_dict() == {
@@ -36,4 +30,3 @@ def test_example_submission_has_required_contract() -> None:
     )
     assert tuple(example.columns) == OUTPUT_COLUMNS
     validate_prediction_frame(example)
-

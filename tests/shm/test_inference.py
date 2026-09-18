@@ -24,9 +24,9 @@ def _small_artifact(tmp_path: Path, input_dir: Path) -> Path:
         rows.append(extract_features(load_shm_file(path, 5), config))
         targets.append(float(amplitude**5))
     frame = pd.DataFrame(rows)
-    model = FittedDamageModel(
-        PhysicsSpec(5.0, "fixed"), ResidualSpec("none"), config
-    ).fit(frame, np.asarray(targets))
+    model = FittedDamageModel(PhysicsSpec(5.0, "fixed"), ResidualSpec("none"), config).fit(
+        frame, np.asarray(targets)
+    )
     artifact = tmp_path / "model.joblib"
     joblib.dump(
         {"model": model, "metadata": {"subsystem": "SHM", "config": config.__dict__}},

@@ -31,9 +31,7 @@ def _bounded_numeric(
 
 
 def _schema_name(case: AcvCase) -> str:
-    parameters = {
-        parameter for columns in case.car_columns.values() for parameter in columns
-    }
+    parameters = {parameter for columns in case.car_columns.values() for parameter in columns}
     return (
         "rich_pressure"
         if any("Pressure Value" in parameter for parameter in parameters)
@@ -85,9 +83,7 @@ def _pressure_diagnostics(
             result[car]["high_pressure_system_imbalance_median"] = float(
                 high_imbalance[car].median()
             )
-            result[car]["low_pressure_system_imbalance_median"] = float(
-                low_imbalance[car].median()
-            )
+            result[car]["low_pressure_system_imbalance_median"] = float(low_imbalance[car].median())
     return result
 
 
@@ -138,8 +134,10 @@ def extract_case_features(case: AcvCase, config: AcvConfig) -> pd.DataFrame:
         if running_column is None:
             active[car] = indoor[car].notna() & setpoint[car].notna()
         else:
-            active[car] = case.frame[running_column].astype("string").str.contains(
-                "Cooling", case=False, na=False
+            active[car] = (
+                case.frame[running_column]
+                .astype("string")
+                .str.contains("Cooling", case=False, na=False)
             )
         valid_column = _find_parameter(columns, "valid")
         if valid_column is not None:
@@ -156,7 +154,9 @@ def extract_case_features(case: AcvCase, config: AcvConfig) -> pd.DataFrame:
     peer_residual = active_indoor.sub(peer_median, axis=0)
     control_error = indoor - setpoint
     schema = _schema_name(case)
-    pressure = _pressure_diagnostics(case, active, valid, config) if schema == "rich_pressure" else {}
+    pressure = (
+        _pressure_diagnostics(case, active, valid, config) if schema == "rich_pressure" else {}
+    )
 
     rows: list[dict[str, float | int | str | bool]] = []
     for car in cars:
@@ -176,9 +176,7 @@ def extract_case_features(case: AcvCase, config: AcvConfig) -> pd.DataFrame:
             "supported": usable_samples >= config.minimum_usable_samples,
             "hottest_fraction": float(hottest.mean()) if not hottest.empty else np.nan,
             "above_setpoint_fraction": (
-                float((error > config.setpoint_exceedance_c).mean())
-                if not error.empty
-                else np.nan
+                float((error > config.setpoint_exceedance_c).mean()) if not error.empty else np.nan
             ),
             "peer_temp_median": float(residual.median()) if not residual.empty else np.nan,
             "peer_temp_q90": float(residual.quantile(0.9)) if not residual.empty else np.nan,

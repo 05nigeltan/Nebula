@@ -144,13 +144,10 @@ def build_acv_card(source_id: str, diagnostics: pd.DataFrame) -> OperatorCard:
                 "of poor cooling."
             )
         )
-        action = (
-            f"Prioritise Car {top['car']} for ACV diagnostic checks. "
-            + (
-                f"Because the result is close, inspect {second_text} as well."
-                if not clear
-                else f"If no issue is confirmed, inspect {second_text} next."
-            )
+        action = f"Prioritise Car {top['car']} for ACV diagnostic checks. " + (
+            f"Because the result is close, inspect {second_text} as well."
+            if not clear
+            else f"If no issue is confirmed, inspect {second_text} next."
         )
     return OperatorCard(
         tone=tone,

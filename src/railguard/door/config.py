@@ -51,4 +51,3 @@ class DoorConfig:
     outer_folds: int = 5
     inner_folds: int = 4
     random_state: int = 42
-

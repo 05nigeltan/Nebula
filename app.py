@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import tempfile
-import zipfile
 from pathlib import Path
 
 import numpy as np
@@ -30,6 +29,7 @@ from railguard.operator_ui import (
 )
 from railguard.shm.inference import load_shm_artifact, predict_shm_files
 from railguard.shm.parsing import ShmDataError, load_shm_file
+from railguard.uploads import UploadDataError, materialize_uploads
 
 ROOT = Path(__file__).resolve().parent
 DOOR_MODEL_PATH = ROOT / "artifacts" / "door" / "model.joblib"
@@ -87,12 +87,19 @@ def render_door_app() -> None:
                 worksheets = workbook.sheet_names
             uploaded.seek(0)
             sheet_name = st.selectbox("Worksheet containing Door sensor data", worksheets)
-        predictions, diagnostics, cycle_diagnostics = predict_door_detailed(
-            uploaded,
-            DOOR_MODEL_PATH,
-            sheet_name=sheet_name,
-        )
-    except (DoorDataError, ImportError, OSError, ValueError, KeyError) as exc:
+        with tempfile.TemporaryDirectory(prefix="railguard-door-") as temporary:
+            path = materialize_uploads(
+                [uploaded],
+                Path(temporary),
+                allowed_suffixes={".csv", ".xlsx", ".xls"},
+                subsystem="Door",
+            )[0]
+            predictions, diagnostics, cycle_diagnostics = predict_door_detailed(
+                path,
+                DOOR_MODEL_PATH,
+                sheet_name=sheet_name,
+            )
+    except (DoorDataError, UploadDataError, ImportError, OSError, ValueError, KeyError) as exc:
         st.error(f"The file could not be processed: {exc}")
         return
 
@@ -114,9 +121,7 @@ def render_door_app() -> None:
         col1.metric("Detected cycles", diagnostics.cycle_count)
         col2.metric("Abnormal cycles", abnormal)
         col3.metric("Normal cycles", diagnostics.cycle_count - abnormal)
-        door_details = predictions.merge(
-            cycle_diagnostics, on=["start_time", "end_time"]
-        ).rename(
+        door_details = predictions.merge(cycle_diagnostics, on=["start_time", "end_time"]).rename(
             columns={
                 "model_score": "internal_comparison_score",
                 "detection_threshold": "internal_flagging_level",
@@ -128,37 +133,6 @@ def render_door_app() -> None:
             width="stretch",
             hide_index=True,
         )
-
-
-def _materialize_shm_uploads(uploads, directory: Path) -> list[Path]:
-    paths: list[Path] = []
-    names: set[str] = set()
-    for uploaded in uploads:
-        if Path(uploaded.name).suffix.lower() == ".zip":
-            with zipfile.ZipFile(uploaded) as archive:
-                members = [item for item in archive.infolist() if not item.is_dir()]
-                if not members:
-                    raise ShmDataError("The uploaded ZIP is empty")
-                for member in members:
-                    source = Path(member.filename)
-                    if source.suffix.lower() != ".csv":
-                        raise ShmDataError(f"ZIP member is not CSV: {member.filename}")
-                    name = source.name
-                    if name in names:
-                        raise ShmDataError(f"Duplicate SHM filename: {name}")
-                    target = directory / name
-                    target.write_bytes(archive.read(member))
-                    names.add(name)
-                    paths.append(target)
-        else:
-            name = Path(uploaded.name).name
-            if name in names:
-                raise ShmDataError(f"Duplicate SHM filename: {name}")
-            target = directory / name
-            target.write_bytes(uploaded.getvalue())
-            names.add(name)
-            paths.append(target)
-    return paths
 
 
 def _damage_distribution(values: np.ndarray) -> pd.DataFrame:
@@ -177,9 +151,7 @@ def _damage_distribution(values: np.ndarray) -> pd.DataFrame:
 
 def render_shm_app() -> None:
     st.header("Structural fatigue-damage estimator")
-    st.caption(
-        "Upload one or more headerless single-column stress CSVs, or a ZIP containing CSVs."
-    )
+    st.caption("Upload one or more headerless single-column stress CSVs, or a ZIP containing CSVs.")
     if not SHM_MODEL_PATH.exists():
         st.error("No SHM model found. Run `uv run python scripts/train_shm.py` first.")
         return
@@ -191,24 +163,23 @@ def render_shm_app() -> None:
     )
     if not uploads:
         return
-    if sum(Path(upload.name).suffix.lower() == ".zip" for upload in uploads) > 1:
-        st.error("Upload at most one ZIP archive at a time.")
-        return
     try:
         with tempfile.TemporaryDirectory(prefix="railguard-shm-") as temporary:
-            paths = _materialize_shm_uploads(uploads, Path(temporary))
+            paths = materialize_uploads(
+                uploads,
+                Path(temporary),
+                allowed_suffixes={".csv"},
+                subsystem="SHM",
+                allow_zip=True,
+            )
             predictions, diagnostics = predict_shm_files(paths, SHM_MODEL_PATH)
             path_by_name = {path.name: path for path in paths}
             metadata = load_shm_artifact(SHM_MODEL_PATH)["metadata"]
-            selected = st.selectbox(
-                "Choose a recording to review", predictions["file_id"].tolist()
-            )
+            selected = st.selectbox("Choose a recording to review", predictions["file_id"].tolist())
             selected_prediction = float(
                 predictions.loc[predictions["file_id"].eq(selected), "prediction"].iloc[0]
             )
-            selected_diagnostics = diagnostics.loc[
-                diagnostics["file_id"].eq(selected)
-            ].iloc[0]
+            selected_diagnostics = diagnostics.loc[diagnostics["file_id"].eq(selected)].iloc[0]
             render_operator_card(
                 build_shm_card(
                     selected,
@@ -262,39 +233,9 @@ def render_shm_app() -> None:
                 width="stretch",
                 hide_index=True,
             )
-    except (ShmDataError, zipfile.BadZipFile, OSError, ValueError, KeyError) as exc:
+    except (ShmDataError, UploadDataError, OSError, ValueError, KeyError) as exc:
         st.error(f"The SHM files could not be processed: {exc}")
         return
-
-def _materialize_corrugation_uploads(uploads, directory: Path) -> list[Path]:
-    paths: list[Path] = []
-    names: set[str] = set()
-    for uploaded in uploads:
-        if Path(uploaded.name).suffix.lower() == ".zip":
-            with zipfile.ZipFile(uploaded) as archive:
-                members = [item for item in archive.infolist() if not item.is_dir()]
-                if not members:
-                    raise CorrugationDataError("The uploaded ZIP is empty")
-                for member in members:
-                    source = Path(member.filename)
-                    if source.suffix.lower() != ".csv":
-                        raise CorrugationDataError(f"ZIP member is not CSV: {member.filename}")
-                    name = source.name
-                    if name in names:
-                        raise CorrugationDataError(f"Duplicate Corrugation filename: {name}")
-                    target = directory / name
-                    target.write_bytes(archive.read(member))
-                    names.add(name)
-                    paths.append(target)
-        else:
-            name = Path(uploaded.name).name
-            if name in names:
-                raise CorrugationDataError(f"Duplicate Corrugation filename: {name}")
-            target = directory / name
-            target.write_bytes(uploaded.getvalue())
-            names.add(name)
-            paths.append(target)
-    return paths
 
 
 def render_corrugation_app() -> None:
@@ -316,15 +257,16 @@ def render_corrugation_app() -> None:
     )
     if not uploads:
         return
-    if sum(Path(upload.name).suffix.lower() == ".zip" for upload in uploads) > 1:
-        st.error("Upload at most one ZIP archive at a time.")
-        return
     try:
         with tempfile.TemporaryDirectory(prefix="railguard-corrugation-") as temporary:
-            paths = _materialize_corrugation_uploads(uploads, Path(temporary))
-            predictions, diagnostics = predict_corrugation_files(
-                paths, CORRUGATION_MODEL_PATH
+            paths = materialize_uploads(
+                uploads,
+                Path(temporary),
+                allowed_suffixes={".csv"},
+                subsystem="Corrugation",
+                allow_zip=True,
             )
+            predictions, diagnostics = predict_corrugation_files(paths, CORRUGATION_MODEL_PATH)
             selected = st.selectbox(
                 "Choose a recording to review",
                 predictions["file_id"].tolist(),
@@ -377,7 +319,7 @@ def render_corrugation_app() -> None:
                 f"estimated speed: {selected_row['speed_mps']:.2f} m/s."
             )
             engineering.dataframe(diagnostics, width="stretch", hide_index=True)
-    except (CorrugationDataError, zipfile.BadZipFile, OSError, ValueError, KeyError) as exc:
+    except (CorrugationDataError, UploadDataError, OSError, ValueError, KeyError) as exc:
         st.error(f"The Corrugation files could not be processed: {exc}")
 
 
@@ -404,11 +346,12 @@ def render_acv_app() -> None:
         return
     try:
         with tempfile.TemporaryDirectory(prefix="railguard-acv-") as temporary:
-            paths = []
-            for uploaded in uploads:
-                path = Path(temporary) / Path(uploaded.name).name
-                path.write_bytes(uploaded.getvalue())
-                paths.append(path)
+            paths = materialize_uploads(
+                uploads,
+                Path(temporary),
+                allowed_suffixes={".xlsx"},
+                subsystem="ACV",
+            )
             predictions, diagnostics = predict_acv_files(paths, ACV_MODEL_PATH)
             selected = st.selectbox(
                 "Choose a workbook to review",
@@ -467,8 +410,9 @@ def render_acv_app() -> None:
                 width="stretch",
                 hide_index=True,
             )
-    except (AcvDataError, ImportError, OSError, ValueError, KeyError) as exc:
+    except (AcvDataError, UploadDataError, ImportError, OSError, ValueError, KeyError) as exc:
         st.error(f"The ACV workbooks could not be processed: {exc}")
+
 
 st.set_page_config(page_title="RailGuard Train Monitor", page_icon="🚆", layout="wide")
 st.title("RailGuard — train condition monitor")
