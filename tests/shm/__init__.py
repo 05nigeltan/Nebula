@@ -1,1 +1,0 @@
-"""SHM subsystem tests."""

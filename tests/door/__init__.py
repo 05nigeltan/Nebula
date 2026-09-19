@@ -1,1 +1,0 @@
-"""Door subsystem tests."""

@@ -1,0 +1,30 @@
+{
+  "team": "cluelessbunch",
+  "demo_video": "demo_video.mov",
+  "prediction_sources": {
+    "door_predictions.csv": "Optional_Items/predictions/door_predictions.csv",
+    "shm_predictions.csv": "Optional_Items/predictions/shm_predictions.csv",
+    "rail_predictions.csv": "Optional_Items/predictions/rail_predictions.csv",
+    "acv_predictions.csv": "Optional_Items/predictions/acv_predictions.csv"
+  },
+  "prediction_sha256": {
+    "door_predictions.csv": "48d1de94d11c4c0313d52e456ecb4d5c75a2704e06f06c1a8c228061f7231063",
+    "shm_predictions.csv": "3d4ecb603432ec90a39537ed6dfe770a5a4d0be832cd32e1fcb2bac063eeca40",
+    "rail_predictions.csv": "7e9e9a8f2d8e65348c0173c2c83758fae56e09acfdae5735662f70f65064acbf",
+    "acv_predictions.csv": "33907724235cd0ecd1889ef9fc96ffc88edd667b0d25e72e8b8f9306ec07028d"
+  },
+  "app_rail_model": "Promoted 75% baseline / 25% sensor-view ensemble; matches prediction ZIP",
+  "ensemble_artifact": "Optional_Items/Rail Corrugation/model/ensemble_submission/model.joblib",
+  "excluded": [
+    "datasets",
+    ".git",
+    ".venv",
+    "caches",
+    "secrets",
+    "training reports"
+  ],
+  "promotion": "User approved after reporting submission macro-F1 0.68 versus previous 0.60",
+  "demo_video_sha256": "58a54b97e95118a503e3f62236cca83df7818a98a38f0d00e998a24e8809db8d",
+  "canonical_app_source": "app/",
+  "google_cloud_url": "https://railguard-rilk77egmq-uc.a.run.app/"
+}

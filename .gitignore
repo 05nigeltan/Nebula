@@ -9,11 +9,20 @@ htmlcov/
 cache/
 
 # Local hackathon brief, references, and multi-gigabyte source datasets
-/NebulaX-Hackathon-ProblemStatement/
+NebulaX-Hackathon-ProblemStatement/
 
 # Generated predictions and validation outputs
+/local-restructure-backup/
+/railguard-cloud-run.zip
 *_predictions.csv
 reports/
+/artifacts/corrugation_v2/
+/artifacts/corrugation_aug/
+/cluelessbunch/app/artifacts/corrugation_v2/
+/cluelessbunch/app/artifacts/corrugation_aug/
+/cluelessbunch/app/railguard-cloud-run.zip
+/cluelessbunch/Optional_Items/deployment_archives/
+/cluelessbunch/Optional_Items/predictions/
 
 # Local research notes and operating-system files
 solution-research/

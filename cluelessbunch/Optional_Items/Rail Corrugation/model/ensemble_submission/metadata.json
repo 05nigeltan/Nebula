@@ -1,0 +1,157 @@
+{
+  "subsystem": "Rail Corrugation",
+  "config": {
+    "expected_samples": 10000,
+    "sample_rate_hz": 10000.0,
+    "tach_teeth": 90,
+    "wheel_diameter_m": 0.85,
+    "welch_nperseg": 2048,
+    "welch_overlap": 1024,
+    "stft_nperseg": 1024,
+    "stft_overlap": 512,
+    "fixed_bands_hz": [
+      [
+        0.0,
+        50.0
+      ],
+      [
+        50.0,
+        100.0
+      ],
+      [
+        100.0,
+        200.0
+      ],
+      [
+        200.0,
+        400.0
+      ],
+      [
+        400.0,
+        800.0
+      ],
+      [
+        800.0,
+        1600.0
+      ],
+      [
+        1600.0,
+        3200.0
+      ],
+      [
+        3200.0,
+        5001.0
+      ]
+    ],
+    "wavelength_bands_m": [
+      [
+        0.02,
+        0.04
+      ],
+      [
+        0.04,
+        0.08
+      ],
+      [
+        0.08,
+        0.16
+      ],
+      [
+        0.16,
+        0.32
+      ],
+      [
+        0.32,
+        0.64
+      ]
+    ],
+    "spatial_step_m": 0.005,
+    "spatial_min_transitions": 20,
+    "spatial_welch_nperseg": 1024,
+    "spatial_welch_overlap": 512,
+    "spatial_window_nperseg": 512,
+    "spatial_window_overlap": 256,
+    "spatial_feature_families": [
+      "time",
+      "spatial_core",
+      "spatial_time"
+    ],
+    "spatial_linear_c_values": [
+      0.003,
+      0.01,
+      0.03
+    ],
+    "spatial_rbf_c_values": [
+      0.1,
+      1.0,
+      10.0
+    ],
+    "spatial_rbf_gamma_values": [
+      "scale"
+    ],
+    "speed_weight_caps": [
+      1.0,
+      2.0
+    ],
+    "feature_families": [
+      "time",
+      "compact"
+    ],
+    "c_values": [
+      0.003,
+      0.01,
+      0.03,
+      0.1
+    ],
+    "positive_weight_multipliers": [
+      0.75,
+      1.0,
+      1.5
+    ],
+    "include_raw_speed_options": [
+      false
+    ],
+    "side_i_bias_values": [
+      0.0,
+      0.2,
+      0.4
+    ],
+    "outer_folds": 5,
+    "outer_repeats": 5,
+    "inner_folds": 4,
+    "random_state": 42,
+    "threshold_grid_size": 41,
+    "minimum_mean_macro_f1": 0.7,
+    "minimum_side_i_recall": 0.5,
+    "minimum_side_ii_recall": 0.6,
+    "minimum_overlap_macro_f1": 0.65
+  },
+  "final_spec": {
+    "feature_family": "time",
+    "c_value": 0.01,
+    "positive_weight_multiplier": 0.75,
+    "include_raw_speed": false,
+    "threshold": 0.3216509649018737,
+    "side_i_bias": 0.0
+  },
+  "augmented_weight": 0.25,
+  "alignment": [
+    1.0434924470555036,
+    -0.06578404943307181
+  ],
+  "training_files": 272,
+  "test_used_for_selection": false,
+  "experimental_not_deployed": true,
+  "previous_sha256": "a98a1f8fd1bc858e1d4cee5cd38b52dda9b290e244b6fc8c4cf8a50aa4790fb5",
+  "labels_sha256": "b24e8f98d3d49d919f0a169aec5978a6806b4f548f55909a3a03067586e4d186",
+  "output": "C:\\University stuff\\Hackathon2\\rail_predictions_ensemble.csv",
+  "run_directory": "C:\\University stuff\\Hackathon2\\reports\\corrugation_ensemble\\submissions\\20260919T041338318951Z",
+  "prediction_rows": 68,
+  "changed_predictions": 2,
+  "class_counts": {
+    "Normal": 60,
+    "Side I": 5,
+    "Side II": 3
+  },
+  "output_sha256": "7e9e9a8f2d8e65348c0173c2c83758fae56e09acfdae5735662f70f65064acbf"
+}
