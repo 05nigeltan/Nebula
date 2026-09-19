@@ -1,5 +1,10 @@
 # SHM fatigue-damage model
 
+Run commands from `cluelessbunch/app` after installing the environment described in its README.
+The input examples assume the excluded datasets are at the repository root; adjust the paths
+if your data is elsewhere. The saved app models do not require retraining. CLI outputs below
+are local exports; packaging uses the CSVs in `../Optional_Items/predictions/`.
+
 ## Model
 
 The deployed SHM artifact is a calibrated rainflow-Miner model trained on the 64 labelled signal
@@ -19,7 +24,7 @@ condition-cluster, and bootstrap gates, so it is not enabled in the saved artifa
 Install dependencies and train:
 
 ```powershell
-uv sync --extra dev --extra app
+uv sync --frozen --extra dev
 uv run python scripts/train_shm.py
 ```
 
@@ -33,7 +38,7 @@ Generate a submission file and optional diagnostic report:
 
 ```powershell
 uv run python scripts/predict_shm.py `
-  --input "NebulaX-Hackathon-ProblemStatement/PS3/02_Datasets/SHM/Test" `
+  --input "../../NebulaX-Hackathon-ProblemStatement/PS3/02_Datasets/SHM/Test" `
   --output shm_predictions.csv `
   --diagnostics reports/shm/test_input_diagnostics.csv
 ```
@@ -42,7 +47,7 @@ Run verification and the app:
 
 ```powershell
 uv run pytest
-uv run --extra app streamlit run app.py
+uv run streamlit run app.py
 ```
 
 The app accepts one or more SHM CSV files or a ZIP of CSV files. It displays predictions, a

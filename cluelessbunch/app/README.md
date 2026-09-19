@@ -33,13 +33,15 @@ Upload your own supported recordings through the UI. The original hackathon data
 not included. The source package and four active model artifacts are included, so retraining
 is not required to run the app. Training scripts require the original labelled datasets.
 
-## Rail submission variant
+## Active rail model
 
 The team's `predictions.zip` and active app both use the 75% full-sensor /
 25% sensor-view ensemble. Hyperparameters were selected using training-only validation;
-the team approved promotion after reporting submission macro-F1 of 68% versus 60% previously.
-The exact ensemble artifact and metadata are under
-`../Optional_Items/Rail Corrugation/model/ensemble_submission/`.
+the team approved promotion using submission feedback.
+The active ensemble artifact and metadata are under `artifacts/corrugation/`, mirrored in
+`../Optional_Items/Rail Corrugation/model/`. The latter's `ensemble_submission/` subfolder
+preserves the original pre-promotion artifact and metadata, not the current promotion record.
+See `CORRUGATION_README.md` for the method, results and safe reproduction commands.
 
 The ensemble did not demonstrate a validation improvement (mean fold macro-F1 0.7543 versus
 0.7554 for the macro-F1-first control). Submission feedback informed the final model choice
@@ -49,8 +51,8 @@ engineering or maintenance procedures. Only load trusted Joblib artifacts.
 ## Tests
 
 Install development tools with `python -m pip install -e ".[dev]"`. Seven tests require
-the excluded hackathon training datasets or
-example submission files; a plain full test run will fail those seven until the original
+the excluded hackathon training datasets or example submission files; a plain full test run
+will fail those seven until the original
 `NebulaX-Hackathon-ProblemStatement` directory is supplied at this app root or the repository
 root. Alternatively set `RAILGUARD_PARTICIPANT_ROOT` to the absolute path of its `PS3` directory.
 In this working tree the original datasets remain at repository root and are auto-detected.

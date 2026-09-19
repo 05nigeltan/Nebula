@@ -1,7 +1,9 @@
 # Operator-facing results
 
 RailGuard now places a plain-language action card before the technical output for every subsystem.
-The original prediction CSVs are unchanged.
+The explanation layer does not change model predictions or the required submission CSV formats.
+The active rail model is the promoted 75% full-sensor / 25% sensor-view SVM ensemble; see
+`CORRUGATION_README.md` for its selection history.
 
 Each card answers:
 
@@ -45,5 +47,6 @@ uv run ruff check .
 uv run pytest -q
 ```
 
-The research basis, alternatives, and proposed operator-usability protocol are in
-`solution-research/operator-friendly-ui/`.
+The research basis, alternatives, and proposed operator-usability protocol are retained locally
+at repository-root `solution-research/operator-friendly-ui/`. These Git-ignored development notes
+are not included in the submission.

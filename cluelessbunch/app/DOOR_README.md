@@ -1,5 +1,10 @@
 # Door abnormal-resistance pipeline
 
+Run commands from `cluelessbunch/app` after installing the environment described in its README.
+The input examples assume the excluded datasets are at the repository root; adjust the paths
+if your data is elsewhere. The saved app models do not require retraining. CLI outputs below
+are local exports; packaging uses the CSVs in `../Optional_Items/predictions/`.
+
 This project turns the continuous Door sensor stream into exact cycle boundaries and classifies
 each cycle as `Normal` or `Abnormal resistance`.
 
@@ -21,7 +26,7 @@ each cycle as `Normal` or `Abnormal resistance`.
 Install the locked environment and train:
 
 ```powershell
-uv sync --extra dev --extra app
+uv sync --frozen --extra dev
 uv run python scripts/train_door.py
 ```
 
@@ -29,7 +34,7 @@ Generate the required submission file from CSV or Excel:
 
 ```powershell
 uv run python scripts/predict.py `
-  --input "NebulaX-Hackathon-ProblemStatement/PS3/02_Datasets/Door/Test.csv" `
+  --input "../../NebulaX-Hackathon-ProblemStatement/PS3/02_Datasets/Door/Test.csv" `
   --output door_predictions.csv
 ```
 

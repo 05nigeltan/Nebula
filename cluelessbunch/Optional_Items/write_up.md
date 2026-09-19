@@ -7,12 +7,13 @@ Health Monitoring (SHM), Rail Corrugation, and ACV refrigerant leaks. Because ea
 different data and requires a different answer, we built a suitable model for each instead of
 forcing one algorithm to handle everything.
 
-Our guiding rule was **use the simplest model that performs reliably**. We compared each baseline
-with machine-learning alternatives and kept the more complex option only when validation showed a
-clear benefit. Competition test answers were not used during training or model selection.
+Our guiding rule was **use the simplest model supported by the available evidence**. We compared
+baselines with alternatives using training-data validation. For Rail Corrugation, we later selected
+the ensemble using submission feedback, despite essentially tied local
+validation results. Training and hyperparameter tuning did not use hidden test labels.
 
-> The results below are estimates from the labelled training data, not hidden-test scores or
-> safety guarantees.
+> Results below are training-data validation estimates, not safety guarantees. Submission
+> feedback also informed the final rail model choice.
 
 ## 1. Door abnormal-resistance detection
 
@@ -72,18 +73,17 @@ sides. It views every recording once from Side I's perspective and once from Sid
 
 ### Final model, metric and performance
 
-The selected side-symmetric linear SVM was more effective than a direct three-class model and a
-speed-based baseline. Macro F1 is the official metric because it gives Normal, Side I and Side II
-equal importance instead of allowing the large Normal class to dominate the result.
+Both components of the final ensemble use a side-symmetric linear SVM: the same fault detector
+is applied to either side. Macro F1 is the official metric because it gives Normal, Side I and
+Side II equal importance instead of allowing the large Normal class to dominate the result.
 
 The final version blends two side-symmetric SVMs: 75% from full-sensor training and 25% from
 training with different cars' sensors omitted. This combines their different fault-detection
-patterns. The team reported a submission macro F1 of **68%**, up from **60%** for the previous
-submission, and selected the ensemble on that basis.
+patterns.
 
 Local validation was essentially tied: average fold macro F1 **0.7543** for the ensemble versus
-**0.7554** for the macro-F1-first single-model control. The submission scores are team-reported,
-not independently verified, and were used to choose the final model. Side I remains the weakest
+**0.7554** for the macro-F1-first single-model control. Submission feedback informed the final
+model choice. Side I remains the weakest
 class; neither approach detected the three Side I faults in the high-speed holdout.
 
 ## 4. ACV refrigerant-leak localisation
@@ -121,8 +121,8 @@ RailGuard combines four strengths:
    left-versus-right rail comparisons, and comparisons between cars on the same train.
 2. **Validation matches real use.** Complete movements, recordings or workbooks are held out
    instead of mixing closely related sensor rows between training and validation.
-3. **Complexity is controlled.** More complicated models are rejected when they do not provide a
-   clear and consistent improvement.
+3. **Model choices are evidence-led.** We distinguish local validation from submission feedback,
+   and make the rail ensemble's remaining validation weaknesses explicit.
 4. **Results are actionable.** The app explains what was detected, what should be reviewed next,
    and what the model cannot prove.
 
@@ -140,6 +140,6 @@ patterns that matter to maintenance teams.
 
 ## Conclusion
 
-RailGuard selects the simplest dependable model for each subsystem and evaluates it using the
-competition's official metric. Internal validation is strong across all four tasks, while the
-system remains clear about uncertainty and practical enough for operator-facing decision support.
+RailGuard uses system-specific models and the competition's official metrics. Results are
+promising, but small fault datasets and weak high-speed rail detection limit confidence in unseen
+conditions. The app supports operator review; it does not replace engineering judgement.

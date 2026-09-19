@@ -1,5 +1,10 @@
 # ACV Refrigerant-Leak Localisation
 
+Run commands from `cluelessbunch/app` after installing the environment described in its README.
+The input examples assume the excluded datasets are at the repository root; adjust the paths
+if your data is elsewhere. The saved app models do not require retraining. CLI outputs below
+are local exports; packaging uses the CSVs in `../Optional_Items/predictions/`.
+
 This pipeline ranks every car in an ACV workbook from most to least likely to have a
 refrigerant leak. It uses peer-relative cabin-temperature and setpoint deviations during valid
 cooling operation. The complete workbook is the statistical unit: timestamp rows are never
@@ -26,7 +31,7 @@ learning.
 
 ```powershell
 uv run python scripts/predict_acv.py `
-  --input NebulaX-Hackathon-ProblemStatement/PS3/02_Datasets/ACV/Test `
+  --input ../../NebulaX-Hackathon-ProblemStatement/PS3/02_Datasets/ACV/Test `
   --output acv_predictions.csv `
   --diagnostics reports/acv/test_input_diagnostics.csv
 ```
